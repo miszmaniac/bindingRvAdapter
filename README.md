@@ -51,7 +51,7 @@ android {
 
 ```
 
-4. **Step 4.** Wrap your recyclerView item in layout tag (with it Bindings are not generated) 
+4. **Step 4.** Wrap your RecyclerView item in <layout> tag (without it Bindings are not generated) 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
