@@ -8,7 +8,12 @@ import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 import java.lang.reflect.Type
 
-class BindingRVAdapter : RecyclerView.Adapter<BindingAdapterHolder<ViewDataBinding>>() {
+class BindingRVAdapter(useStableIds: Boolean = true) :
+    RecyclerView.Adapter<BindingAdapterHolder<ViewDataBinding>>() {
+
+    init {
+        setHasStableIds(useStableIds)
+    }
 
     var data: List<Any> = emptyList()
         set(value) {
