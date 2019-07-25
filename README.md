@@ -12,12 +12,6 @@ val adapter = BindingRVAdapter()
             Toast.makeText(this@MainActivity, data, Toast.LENGTH_SHORT).show()
         }
     }
-    .register<TestItemLayoutBinding, Int>(R.layout.test_item_layout) { data ->
-        title.text = getString(data)
-        root.setOnClickListener {
-            Toast.makeText(this@MainActivity, getString(data), Toast.LENGTH_SHORT).show()
-        }
-    }
 
 recyclerView.adapter = adapter
 
