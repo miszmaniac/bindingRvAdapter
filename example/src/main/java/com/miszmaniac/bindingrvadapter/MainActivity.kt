@@ -16,22 +16,22 @@ class MainActivity : AppCompatActivity() {
 
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-val adapter = BindingRVAdapter()
-    .register<TestItemLayoutBinding, String>(R.layout.test_item_layout) { data ->
-        title.text = data
-        root.setOnClickListener {
-            Toast.makeText(this@MainActivity, data, Toast.LENGTH_SHORT).show()
-        }
-    }
-    .register<TestItemLayoutBinding, Int>(R.layout.test_item_layout) { data ->
-        title.text = getString(data)
-        root.setOnClickListener {
-            Toast.makeText(this@MainActivity, getString(data), Toast.LENGTH_SHORT).show()
-        }
-    }
+        val adapter = BindingRVAdapter()
+            .register<TestItemLayoutBinding, String>(R.layout.test_item_layout) { data ->
+                title.text = data
+                root.setOnClickListener {
+                    Toast.makeText(this@MainActivity, data, Toast.LENGTH_SHORT).show()
+                }
+            }
+            .register<TestItemLayoutBinding, Int>(R.layout.test_item_layout) { data ->
+                title.text = getString(data)
+                root.setOnClickListener {
+                    Toast.makeText(this@MainActivity, getString(data), Toast.LENGTH_SHORT).show()
+                }
+            }
 
-recyclerView.adapter = adapter
+        recyclerView.adapter = adapter
 
-adapter.data = (0..2000).map { it.toString() }
+        adapter.data = (0..2000).map { it.toString() }
     }
 }
