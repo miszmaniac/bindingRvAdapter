@@ -1,9 +1,9 @@
 package com.miszmaniac.bindingrvadapter
 
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.LinearLayoutManager
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.miszmaniac.bindingrvadapter.databinding.TestItemLayoutBinding
 import com.miszmaniac.rvadapter.BindingRVAdapter
 import kotlinx.android.synthetic.main.activity_main.*
@@ -23,7 +23,9 @@ class MainActivity : AppCompatActivity() {
                     Toast.makeText(this@MainActivity, data, Toast.LENGTH_SHORT).show()
                 }
             }
-            .register<TestItemLayoutBinding, Int>(R.layout.test_item_layout, { it % 2 == 1 }) { data ->
+            .register<TestItemLayoutBinding, Int>(
+                R.layout.test_item_layout,
+                { it % 2 == 1 }) { data ->
                 title.text = data.toString() + " odd "
                 root.setOnClickListener {
                     Toast.makeText(this@MainActivity, getString(data), Toast.LENGTH_SHORT).show()
