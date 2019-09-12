@@ -42,7 +42,11 @@ class BindingRVAdapter(useStableIds: Boolean = true) :
 
     private fun getCreatorKey(position: Int): TypeResolver<*> {
         val itemType = getItem(position)!!::class.java
-        return creators.keys.firstOrNull { it.type == itemType && (it as TypeResolver<Any>).condition(getItem(position) as Any) }
+        return creators.keys.firstOrNull {
+            it.type == itemType && (it as TypeResolver<Any>).condition(
+                getItem(position) as Any
+            )
+        }
             ?: throw IllegalStateException("No binding registered for type: ${itemType.simpleName}")
     }
 
@@ -52,8 +56,8 @@ class BindingRVAdapter(useStableIds: Boolean = true) :
         creators[getCreatorKey(position)]!!.bind(holder.binding, getItem(position)!!)
     }
 
-    private fun getItem(position: Int): Any? =
-        if (data.lastIndex < position) null else data[position]
+    fun getItem(position: Int): Any? =
+        if (data.lastIndex < position || position < 0) null else data[position]
 
     override fun getItemCount(): Int = data.size
 
