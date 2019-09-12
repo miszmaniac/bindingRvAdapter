@@ -52,7 +52,7 @@ class BindingRVAdapter(useStableIds: Boolean = true) :
         creators[getCreatorKey(position)]!!.bind(holder.binding, getItem(position)!!)
     }
 
-    private fun getItem(position: Int): Any? =
+    fun getItem(position: Int): Any? =
         if (data.lastIndex < position) null else data[position]
 
     override fun getItemCount(): Int = data.size
