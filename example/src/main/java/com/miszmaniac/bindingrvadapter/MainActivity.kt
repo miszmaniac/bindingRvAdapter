@@ -23,8 +23,22 @@ class MainActivity : AppCompatActivity() {
                     Toast.makeText(this@MainActivity, data, Toast.LENGTH_SHORT).show()
                 }
             }
+            .register<TestItemLayoutBinding, Int>(R.layout.test_item_layout, { it % 2 == 1 }) { data ->
+                title.text = data.toString() + " odd "
+                root.setOnClickListener {
+                    Toast.makeText(this@MainActivity, getString(data), Toast.LENGTH_SHORT).show()
+                }
+            }
+            .register<TestItemLayoutBinding, Int>(
+                R.layout.test_item_layout,
+                { it % 2 == 0 }) { data ->
+                title.text = data.toString() + " Even "
+                root.setOnClickListener {
+                    Toast.makeText(this@MainActivity, getString(data), Toast.LENGTH_SHORT).show()
+                }
+            }
             .register<TestItemLayoutBinding, Int>(R.layout.test_item_layout) { data ->
-                title.text = getString(data)
+                title.text = data.toString()
                 root.setOnClickListener {
                     Toast.makeText(this@MainActivity, getString(data), Toast.LENGTH_SHORT).show()
                 }
@@ -32,6 +46,6 @@ class MainActivity : AppCompatActivity() {
 
         recyclerView.adapter = adapter
 
-        adapter.data = (0..2000).map { it.toString() }
+        adapter.data = (0..2000).map { it }
     }
 }

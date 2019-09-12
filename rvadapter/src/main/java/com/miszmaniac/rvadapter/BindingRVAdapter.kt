@@ -6,7 +6,6 @@ import androidx.annotation.LayoutRes
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
-import java.lang.reflect.Type
 
 class BindingRVAdapter(useStableIds: Boolean = true) :
     RecyclerView.Adapter<BindingAdapterHolder<ViewDataBinding>>() {
@@ -22,7 +21,7 @@ class BindingRVAdapter(useStableIds: Boolean = true) :
         }
 
     @PublishedApi
-    internal var creators = mutableMapOf<Type, ViewBinder<ViewDataBinding, Any>>()
+    internal var creators = mutableMapOf<TypeResolver<*>, ViewBinder<ViewDataBinding, Any>>()
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -38,18 +37,19 @@ class BindingRVAdapter(useStableIds: Boolean = true) :
     }
 
     override fun getItemViewType(position: Int): Int {
+        return creators[getCreatorKey(position)]!!.viewId
+    }
+
+    private fun getCreatorKey(position: Int): TypeResolver<*> {
         val itemType = getItem(position)!!::class.java
-        if (!creators.containsKey(itemType)) {
-            throw IllegalStateException("No binding registered for type: ${itemType.simpleName}")
-        }
-        return creators[itemType]!!.viewId
+        return creators.keys.firstOrNull { it.type == itemType && (it as TypeResolver<Any>).condition(getItem(position) as Any) }
+            ?: throw IllegalStateException("No binding registered for type: ${itemType.simpleName}")
     }
 
     override fun getItemId(position: Int): Long = data[position].hashCode().toLong()
 
     override fun onBindViewHolder(holder: BindingAdapterHolder<ViewDataBinding>, position: Int) {
-        val itemType = getItem(position)!!::class.java
-        creators[itemType]!!.bind(holder.binding, getItem(position)!!)
+        creators[getCreatorKey(position)]!!.bind(holder.binding, getItem(position)!!)
     }
 
     private fun getItem(position: Int): Any? =
@@ -61,7 +61,17 @@ class BindingRVAdapter(useStableIds: Boolean = true) :
         @LayoutRes layoutRes: Int, noinline bind: LayoutBindingClass.(data: DataType) -> Unit
     ): BindingRVAdapter {
         @Suppress("UNCHECKED_CAST")
-        creators[DataType::class.java] =
+        creators[TypeResolver<DataType>(DataType::class.java)] =
+            ViewBinder(layoutRes, bind) as ViewBinder<ViewDataBinding, Any>
+        return this
+    }
+
+    inline fun <LayoutBindingClass : ViewDataBinding, reified DataType> register(
+        @LayoutRes layoutRes: Int, noinline condition: (data: DataType) -> Boolean,
+        noinline bind: LayoutBindingClass.(data: DataType) -> Unit
+    ): BindingRVAdapter {
+        @Suppress("UNCHECKED_CAST")
+        creators[TypeResolver<DataType>(DataType::class.java, condition)] =
             ViewBinder(layoutRes, bind) as ViewBinder<ViewDataBinding, Any>
         return this
     }
