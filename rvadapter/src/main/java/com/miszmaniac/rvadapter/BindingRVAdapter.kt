@@ -43,9 +43,7 @@ class BindingRVAdapter(useStableIds: Boolean = true) :
     private fun getCreatorKey(position: Int): TypeResolver<*> {
         val itemType = getItem(position)!!::class.java
         return creators.keys.firstOrNull {
-            it.type == itemType && (it as TypeResolver<Any>).condition(
-                getItem(position) as Any
-            )
+            it.matches(itemType, getItem(position) as Any)
         }
             ?: throw IllegalStateException("No binding registered for type: ${itemType.simpleName}")
     }
@@ -75,7 +73,7 @@ class BindingRVAdapter(useStableIds: Boolean = true) :
         noinline bind: LayoutBindingClass.(data: DataType) -> Unit
     ): BindingRVAdapter {
         @Suppress("UNCHECKED_CAST")
-        creators[TypeResolver<DataType>(DataType::class.java, condition)] =
+        creators[TypeResolver(DataType::class.java, condition)] =
             ViewBinder(layoutRes, bind) as ViewBinder<ViewDataBinding, Any>
         return this
     }
