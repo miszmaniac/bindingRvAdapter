@@ -7,11 +7,11 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 
-class BindingRVAdapter(useStableIds: Boolean = true) :
+open class BindingRVAdapter(useStableIds: Boolean = true) :
     RecyclerView.Adapter<BindingAdapterHolder<ViewDataBinding>>() {
 
     init {
-        setHasStableIds(useStableIds)
+        this.setHasStableIds(useStableIds)
     }
 
     var data: List<Any> = emptyList()
