@@ -32,7 +32,7 @@ allprojects {
 2. **Step 2.** Add the dependency
 ```groovy
 dependencies {
-    implementation 'com.github.miszmaniac:bindingRvAdapter:1.0'
+    implementation 'com.github.miszmaniac:bindingRvAdapter:1.2.1'
 }
 ```
 3. **Step 3.** Enable data binding in your app module build.gradle file
