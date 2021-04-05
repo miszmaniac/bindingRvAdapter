@@ -1,6 +1,6 @@
 package com.miszmaniac.rvadapter
 
-import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewbinding.ViewBinding
 
-class BindingAdapterHolder<T : ViewDataBinding>(val binding: T) : RecyclerView.ViewHolder(binding.root)
+class BindingAdapterHolder<T : ViewBinding>(val binding: T) : RecyclerView.ViewHolder(binding.root)
