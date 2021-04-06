@@ -14,5 +14,4 @@ jobs:
 
     steps:
     - uses: vgaidarji/android-github-actions-build@v1.0.1
-    - with:
-        args: "./gradlew :example:assembleDebug"
+    - run: ./gradlew :example:assembleDebug
