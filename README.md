@@ -32,7 +32,7 @@ allprojects {
 2. **Step 2.** Add the dependency
 ```groovy
 dependencies {
-    implementation 'com.github.miszmaniac:bindingRvAdapter:1.2.1'
+    implementation 'com.github.miszmaniac:bindingRvAdapter:2.0.0'
 }
 ```
 3. **Step 3.** Enable data binding in your app module build.gradle file
@@ -44,31 +44,14 @@ apply plugin: 'kotlin-kapt'
 // Enable data binding
 android {
     ...
-    dataBinding {
-        enabled = true
+    buildFeatures {
+        viewBinding true
     }
 }
 
 ```
 
-4. **Step 4.** Wrap your RecyclerView item in <layout> tag (without it Bindings are not generated) 
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<layout>
-
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-        
-        ...
-        
-    </LinearLayout>
-
-</layout>
-```
-
-5. **Step 5.** Create adapter and start registering your data.
+4. **Step 4.** Create adapter and start registering your data.
 
 View binding generates classes with the same name as your Layout file: 
 `test_item_layout -> TestItemLayoutBinding`
@@ -77,15 +60,15 @@ First generic type for register function is your Binding class and second is typ
 
 ```kotlin
 val adapter = BindingRVAdapter()
-    .register<TestItemLayoutBinding, String>(R.layout.test_item_layout) { data ->
+    .register<String, TestItemLayoutBinding>(TestItemLayoutBinding::inflate) { data ->
         title.text = data
     }
-    .register<TestItemLayoutBinding, Int>(R.layout.test_item_layout) { data ->
+    .register<Int, TestItemLayoutBinding>(TestItemLayoutBinding::inflate) { data ->
         title.text = context.getString(data)
     }
 ```
 
-6. **Step 6.** Update RecyclerView data
+6. **Step 5.** Update RecyclerView data
 ```kotlin
     adapter.data = listOf("Cat", "Dog", "Fish", R.string.bird)
 ```
