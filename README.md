@@ -6,7 +6,7 @@ It uses Android View Binding library to create ViewHolder that can later be fill
 
 ```Kotlin
 val adapter = BindingRVAdapter()
-    .register<TestItemLayoutBinding, String>(R.layout.test_item_layout) { data ->
+    .register<String, TestItemLayoutBinding>(TestItemLayoutBinding::inflate) { data ->
         title.text = data
         root.setOnClickListener {
             Toast.makeText(this@MainActivity, data, Toast.LENGTH_SHORT).show()
