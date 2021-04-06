@@ -68,9 +68,9 @@ val adapter = BindingRVAdapter()
     }
 ```
 
-6. **Step 5.** Update RecyclerView data
+5. **Step 5.** Update RecyclerView data
 ```kotlin
     adapter.data = listOf("Cat", "Dog", "Fish", R.string.bird)
 ```
 
-7. **Step 7.** This is it... just run your app now:)
+6. **Step 6.** This is it... just run your app now:)
