@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - '*'
+      - '!master'
+      - '!release*'
 
 jobs:
   build:
@@ -11,6 +13,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      uses: vgaidarji/android-github-actions-build@v1.0.1
-      with:
+    - uses: vgaidarji/android-github-actions-build@v1.0.1
+    - with:
         args: "./gradlew :example:assembleDebug"
