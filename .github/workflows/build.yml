@@ -11,4 +11,7 @@ jobs:
   build:
     name: Build Example
     runs-on: ubuntu-latest
-    run: ./gradlew :example:assembleDebug
+
+    steps:
+    - name: Build
+    - run: ./gradlew :example:assembleDebug
