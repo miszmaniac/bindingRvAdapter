@@ -1,8 +1,10 @@
 package com.miszmaniac.rvadapter
 
-import androidx.annotation.LayoutRes
-import androidx.databinding.ViewDataBinding
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.viewbinding.ViewBinding
 
-data class ViewBinder<LayoutBindingClass : ViewDataBinding, DataType>(
-    @LayoutRes val viewId: Int, val bind: LayoutBindingClass.(data: DataType) -> Unit
+data class ViewBinder<LayoutBindingClass : ViewBinding, DataType>(
+    val viewBindingInflater: (LayoutInflater, ViewGroup, Boolean) -> LayoutBindingClass,
+    val bind: LayoutBindingClass.(data: DataType) -> Unit
 )

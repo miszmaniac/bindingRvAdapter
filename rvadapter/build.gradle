@@ -6,13 +6,13 @@ apply plugin: 'com.github.dcendents.android-maven'
 group = 'com.miszmaniac'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
 
     defaultConfig {
-        minSdkVersion 16
-        targetSdkVersion 29
+        minSdkVersion 21
+        targetSdkVersion 30
     }
-    dataBinding {
+    viewBinding {
         enabled = true
     }
 }

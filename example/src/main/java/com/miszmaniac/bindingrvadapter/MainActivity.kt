@@ -1,64 +1,75 @@
 package com.miszmaniac.bindingrvadapter
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
+import com.miszmaniac.bindingrvadapter.databinding.ActivityMainBinding
+import com.miszmaniac.bindingrvadapter.databinding.SecondaryItemLayoutBinding
 import com.miszmaniac.bindingrvadapter.databinding.TestItemLayoutBinding
 import com.miszmaniac.rvadapter.BindingRVAdapter
-import kotlinx.android.synthetic.main.activity_main.*
 import java.io.Serializable
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
+    lateinit var adapter: BindingRVAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        val binding = ActivityMainBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
-        recyclerView.layoutManager = LinearLayoutManager(this)
-
-        val adapter = BindingRVAdapter()
-            .register<TestItemLayoutBinding, String>(R.layout.test_item_layout) { data ->
+        adapter = BindingRVAdapter()
+            .register<String, TestItemLayoutBinding>(TestItemLayoutBinding::inflate) { data ->
                 title.text = data
                 root.setOnClickListener {
                     Toast.makeText(this@MainActivity, data, Toast.LENGTH_SHORT).show()
                 }
             }
-            .register<TestItemLayoutBinding, Int>(
-                R.layout.test_item_layout,
+            .register<Int, TestItemLayoutBinding>(
+                TestItemLayoutBinding::inflate,
                 { it % 2 == 1 }) { data ->
                 title.text = "$data odd "
                 root.setOnClickListener {
-                    Toast.makeText(this@MainActivity, getString(data), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@MainActivity, "$data odd ", Toast.LENGTH_SHORT).show()
                 }
             }
-            .register<TestItemLayoutBinding, Int>(
-                R.layout.test_item_layout,
+            .register<Int, SecondaryItemLayoutBinding>(
+                SecondaryItemLayoutBinding::inflate,
                 { it % 2 == 0 }) { data ->
                 title.text = "$data Even "
                 root.setOnClickListener {
-                    Toast.makeText(this@MainActivity, getString(data), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@MainActivity, "$data Even ", Toast.LENGTH_SHORT).show()
                 }
             }
-            .register<TestItemLayoutBinding, Int>(R.layout.test_item_layout) { data ->
+            .register<Int, TestItemLayoutBinding>(TestItemLayoutBinding::inflate) { data ->
                 title.text = data.toString()
                 root.setOnClickListener {
                     Toast.makeText(this@MainActivity, getString(data), Toast.LENGTH_SHORT).show()
                 }
             }
-            .register<TestItemLayoutBinding, EnumTest>(R.layout.test_item_layout) { data ->
+            .register<EnumTest, TestItemLayoutBinding>(TestItemLayoutBinding::inflate) { data ->
                 title.text = "$data Enum"
                 root.setOnClickListener {
                     Toast.makeText(this@MainActivity, data.toString(), Toast.LENGTH_SHORT).show()
                 }
             }
-            .register<TestItemLayoutBinding, Serializable>(R.layout.test_item_layout) { data ->
+            .register<Date, TestItemLayoutBinding>(TestItemLayoutBinding::inflate) { data ->
+                title.text = "${data.toGMTString()}"
+                root.setOnClickListener {
+                    Toast.makeText(this@MainActivity, data.toGMTString(), Toast.LENGTH_SHORT).show()
+                }
+            }
+            .register<Serializable, TestItemLayoutBinding>(TestItemLayoutBinding::inflate) { data ->
                 title.text = "$data Serializble"
                 root.setOnClickListener {
                     Toast.makeText(this@MainActivity, data.toString(), Toast.LENGTH_SHORT).show()
                 }
             }
-        recyclerView.adapter = adapter
+        binding.recyclerView.adapter = adapter
 
         adapter.data = listOf(
             SerializableTest.SERIALIZABLE_FIRST,
@@ -68,7 +79,34 @@ class MainActivity : AppCompatActivity() {
             EnumTest.SECOND_ENUM
         ) + (0..2000).map { it }
     }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
+        R.id.shuffleElements -> {
+            adapter.data = adapter.data.shuffled()
+            true
+        }
+        R.id.editElement -> {
+            val index = adapter.data.indexOfFirst { it is String }
+            adapter.data = adapter.data.toMutableList()
+                .apply { this[index] = (this[index] as String).reversed() }.toList()
+            true
+        }
+        R.id.addElement -> {
+            adapter.data = adapter.data.toMutableList()
+                .apply { this.add(0, Calendar.getInstance().time) }.toList()
+            true
+        }
+        else -> {
+            super.onOptionsItemSelected(item)
+        }
+    }
 }
+
 
 enum class SerializableTest {
     SERIALIZABLE_FIRST, SERIALIZABLE_SECOND

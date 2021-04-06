@@ -2,13 +2,11 @@ package com.miszmaniac.rvadapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.annotation.LayoutRes
-import androidx.databinding.DataBindingUtil
-import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewbinding.ViewBinding
 
 open class BindingRVAdapter(useStableIds: Boolean = true) :
-    RecyclerView.Adapter<BindingAdapterHolder<ViewDataBinding>>() {
+    RecyclerView.Adapter<BindingAdapterHolder<ViewBinding>>() {
 
     init {
         this.setHasStableIds(useStableIds)
@@ -21,24 +19,21 @@ open class BindingRVAdapter(useStableIds: Boolean = true) :
         }
 
     @PublishedApi
-    internal var creators = mutableMapOf<TypeResolver<*>, ViewBinder<ViewDataBinding, Any>>()
+    internal var creators = mutableMapOf<TypeResolver<*>, ViewBinder<ViewBinding, Any>>()
 
-    override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
-    ): BindingAdapterHolder<ViewDataBinding> {
-        val binding: ViewDataBinding = DataBindingUtil.inflate(
-            LayoutInflater.from(parent.context),
-            viewType,
-            parent,
-            false
-        )
-        return BindingAdapterHolder(binding)
-    }
+        override fun onCreateViewHolder(
+            parent: ViewGroup,
+            viewType: Int
+        ): BindingAdapterHolder<ViewBinding> {
+            val viewBinding =
+                creators.values.first { it.hashCode() == viewType }
+                    .viewBindingInflater(LayoutInflater.from(parent.context), parent, false)
+            return BindingAdapterHolder(viewBinding)
+        }
 
-    override fun getItemViewType(position: Int): Int {
-        return creators[getCreatorKey(position)]!!.viewId
-    }
+        override fun getItemViewType(position: Int): Int {
+            return creators[getCreatorKey(position)]!!.hashCode()
+        }
 
     private fun getCreatorKey(position: Int): TypeResolver<*> {
         val itemType = getItem(position)!!::class.java
@@ -50,31 +45,34 @@ open class BindingRVAdapter(useStableIds: Boolean = true) :
 
     override fun getItemId(position: Int): Long = data[position].hashCode().toLong()
 
-    override fun onBindViewHolder(holder: BindingAdapterHolder<ViewDataBinding>, position: Int) {
+    override fun onBindViewHolder(holder: BindingAdapterHolder<ViewBinding>, position: Int) {
         creators[getCreatorKey(position)]!!.bind(holder.binding, getItem(position)!!)
     }
 
+    @Suppress("MemberVisibilityCanBePrivate")
     fun getItem(position: Int): Any? =
         if (data.lastIndex < position || position < 0) null else data[position]
 
     override fun getItemCount(): Int = data.size
 
-    inline fun <LayoutBindingClass : ViewDataBinding, reified DataType> register(
-        @LayoutRes layoutRes: Int, noinline bind: LayoutBindingClass.(data: DataType) -> Unit
+    inline fun <reified DataType, LayoutBindingClass : ViewBinding> register(
+        noinline viewBindingFactory: (LayoutInflater, ViewGroup, Boolean) -> LayoutBindingClass,
+        noinline bind: LayoutBindingClass.(data: DataType) -> Unit
     ): BindingRVAdapter {
         @Suppress("UNCHECKED_CAST")
         creators[TypeResolver<DataType>(DataType::class.java)] =
-            ViewBinder(layoutRes, bind) as ViewBinder<ViewDataBinding, Any>
+            ViewBinder(viewBindingFactory, bind) as ViewBinder<ViewBinding, Any>
         return this
     }
 
-    inline fun <LayoutBindingClass : ViewDataBinding, reified DataType> register(
-        @LayoutRes layoutRes: Int, noinline condition: (data: DataType) -> Boolean,
+    inline fun <reified DataType, LayoutBindingClass : ViewBinding> register(
+        noinline viewBindingFactory: (LayoutInflater, ViewGroup, Boolean) -> LayoutBindingClass,
+        noinline condition: (data: DataType) -> Boolean,
         noinline bind: LayoutBindingClass.(data: DataType) -> Unit
     ): BindingRVAdapter {
         @Suppress("UNCHECKED_CAST")
         creators[TypeResolver(DataType::class.java, condition)] =
-            ViewBinder(layoutRes, bind) as ViewBinder<ViewDataBinding, Any>
+            ViewBinder(viewBindingFactory, bind) as ViewBinder<ViewBinding, Any>
         return this
     }
 }
