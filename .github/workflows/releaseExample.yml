@@ -1,4 +1,4 @@
-ame: Release Example App
+name: Release Example App
 
 on:
   pull_request:
