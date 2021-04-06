@@ -11,7 +11,4 @@ jobs:
   build:
     name: Build Example
     runs-on: ubuntu-latest
-
-    steps:
-    - uses: vgaidarji/android-github-actions-build@v1.0.1
-    - run: ./gradlew :example:assembleDebug
+    run: ./gradlew :example:assembleDebug
