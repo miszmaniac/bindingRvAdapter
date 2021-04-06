@@ -21,19 +21,19 @@ open class BindingRVAdapter(useStableIds: Boolean = true) :
     @PublishedApi
     internal var creators = mutableMapOf<TypeResolver<*>, ViewBinder<ViewBinding, Any>>()
 
-    override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
-    ): BindingAdapterHolder<ViewBinding> {
-        val viewBinding =
-            creators.values.first { it.hashCode() == viewType }
-                .viewBindingFactory(LayoutInflater.from(parent.context), parent, false)
-        return BindingAdapterHolder(viewBinding)
-    }
+        override fun onCreateViewHolder(
+            parent: ViewGroup,
+            viewType: Int
+        ): BindingAdapterHolder<ViewBinding> {
+            val viewBinding =
+                creators.values.first { it.hashCode() == viewType }
+                    .viewBindingInflater(LayoutInflater.from(parent.context), parent, false)
+            return BindingAdapterHolder(viewBinding)
+        }
 
-    override fun getItemViewType(position: Int): Int {
-        return creators[getCreatorKey(position)]!!.hashCode()
-    }
+        override fun getItemViewType(position: Int): Int {
+            return creators[getCreatorKey(position)]!!.hashCode()
+        }
 
     private fun getCreatorKey(position: Int): TypeResolver<*> {
         val itemType = getItem(position)!!::class.java
@@ -49,6 +49,7 @@ open class BindingRVAdapter(useStableIds: Boolean = true) :
         creators[getCreatorKey(position)]!!.bind(holder.binding, getItem(position)!!)
     }
 
+    @Suppress("MemberVisibilityCanBePrivate")
     fun getItem(position: Int): Any? =
         if (data.lastIndex < position || position < 0) null else data[position]
 

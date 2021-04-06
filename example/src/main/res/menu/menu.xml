@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/shuffleElements"
+        android:icon="@drawable/shuffle"
+        android:title="Shuffle elements"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/editElement"
+        android:icon="@drawable/playlist_edit"
+        android:title="Reverse first string"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/addElement"
+        android:icon="@drawable/add"
+        android:title="Add at begining"
+        app:showAsAction="always" />
+</menu>
